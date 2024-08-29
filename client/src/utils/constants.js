@@ -1,0 +1,1 @@
+export const HOST  = import.meta.env.SERVER_URL

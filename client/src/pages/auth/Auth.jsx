@@ -4,12 +4,77 @@ import victory from "@/assets/victory.svg";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { loginApi, signUpApi } from "@/apis";
+import { useNavigate } from "react-router-dom";
 
 function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const handleLogin = async () => {};
+
+  const navigate = useNavigate();
+
+  const validateLogin = () => {
+    if (email.length === 0) {
+      toast.error("Email is required", {
+        style: { color: "red", border: "1px solid red" },
+        className: "class",
+      });
+      return false;
+    }
+    if (password.length === 0) {
+      toast.error("Password is required", {
+        style: { color: "red", border: "1px solid red" },
+        className: "class",
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const validateSignup = () => {
+    if (email.length === 0) {
+      toast.error("Email is required", {
+        style: { color: "red", border: "1px solid red" },
+        className: "class",
+      });
+      return false;
+    }
+    if (password.length === 0) {
+      toast.error("Password is required", {
+        style: { color: "red", border: "1px solid red" },
+        className: "class",
+      });
+      return false;
+    }
+    if (password !== confirmPassword) {
+      toast.error("Password and confirm password should be same", {
+        style: { color: "red", border: "1px solid red" },
+        className: "class",
+      });
+      return false;
+    }
+    return true;
+  };
+  const handleLogin = async () => {
+    if (validateLogin()) {
+      const res = await loginApi({ email, password });
+      if (res.result.id) {
+        if (res.result.profileSetup) {
+          navigate("/chat");
+        } else {
+          navigate("/profile");
+        }
+      }
+    }
+  };
+  const handleSignup = async () => {
+    if (validateSignup()) {
+      const res = await signUpApi({ email, password });
+      console.log(res);
+    }
+  };
   return (
     <div className="h-[100vh] w-[100vw] flex items-center justify-center">
       <div
@@ -27,7 +92,7 @@ function Auth() {
             </p>
           </div>
           <div className="flex items-center justify-center w-full">
-            <Tabs className="w-3/4">
+            <Tabs className="w-3/4" defaultValue="login">
               <TabsList className="bg-transparent rounded-none w-full">
                 <TabsTrigger
                   className="data-[state=active]:bg-transparent text-black text-opacity-90
@@ -58,16 +123,16 @@ function Auth() {
                   type="password"
                   placeholder="Password"
                   className="rounded-full p-6 outline-none"
-                  value={email}
+                  value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-            
+
                 <Button className="rounded-full p-6" onClick={handleLogin}>
                   Login
                 </Button>
               </TabsContent>
               <TabsContent className="mt-6 flex flex-col gap-4" value="signup">
-              <Input
+                <Input
                   type="email"
                   placeholder="Email"
                   className="rounded-full p-6 outline-none"
@@ -78,25 +143,29 @@ function Auth() {
                   type="password"
                   placeholder="Password"
                   className="rounded-full p-6 outline-none"
-                  value={email}
+                  value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
                 <Input
                   type="password"
                   placeholder="Confirm password"
                   className="rounded-full p-6 outline-none"
-                  value={email}
+                  value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
-                <Button className="rounded-full p-6" onClick={handleLogin}>
+                <Button className="rounded-full p-6" onClick={handleSignup}>
                   Signup
                 </Button>
               </TabsContent>
             </Tabs>
           </div>
         </div>
-        <div className='hidden xl:flex justify-center items-center'>
-          <img src={background} alt='login image' className='h-full object-cover'/>
+        <div className="hidden xl:flex justify-center items-center">
+          <img
+            src={background}
+            alt="login image"
+            className="h-full object-cover"
+          />
         </div>
       </div>
     </div>
