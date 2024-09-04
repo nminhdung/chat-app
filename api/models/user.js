@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({
   profileSetup: {
     type: Boolean,
     required: false,
+    default: false,
   },
 });
 

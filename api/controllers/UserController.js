@@ -48,7 +48,7 @@ const login = async (req, res, next) => {
             lastName: user.lastName,
             image: user.image,
             profileSetup: user.profileSetup,
-            color:user.color
+            color: user.color,
           }
         : null,
       success: user ? true : false,
@@ -58,7 +58,33 @@ const login = async (req, res, next) => {
     return res.status(500).send("Internal Server Error");
   }
 };
+const getUserInfo = async (req, res) => {
+  try {
+    const userData = await User.findById(req.userId);
+    if (!userData) {
+      return res.status(404).send("User with the given id not found.");
+    }
+    return res.status(200).json({
+      result: userData
+        ? {
+            id: userData._id,
+            email: userData.email,
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            image: userData.image,
+            profileSetup: userData.profileSetup,
+            color: userData.color,
+          }
+        : null,
+      success: userData ? true : false,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Internal Server Error");
+  }
+};
 export const userController = {
   signup,
-  login
+  login,
+  getUserInfo,
 };

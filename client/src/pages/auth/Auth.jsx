@@ -6,9 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { loginApi, signUpApi } from "@/apis";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { signInSuccess } from "@/store/slices/userSlice";
 
 function Auth() {
+  const dispatch = useDispatch();
+  const { userInfo } = useSelector((state) => state.user);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -64,6 +68,7 @@ function Auth() {
         if (res.result.profileSetup) {
           navigate("/chat");
         } else {
+          dispatch(signInSuccess({ userData: res.result }));
           navigate("/profile");
         }
       }
@@ -75,6 +80,9 @@ function Auth() {
       console.log(res);
     }
   };
+  if (userInfo) {
+    return <Navigate to="/profile" />;
+  }
   return (
     <div className="h-[100vh] w-[100vw] flex items-center justify-center">
       <div
