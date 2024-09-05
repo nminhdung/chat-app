@@ -6,7 +6,10 @@ import { colors, getColor } from "@/lib/utils";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { updateUserApi } from "@/apis";
+import { updateSuccess } from "@/store/slices/userSlice";
+import { useNavigate } from "react-router-dom";
 
 export const Profile = () => {
   const [firstName, setFirstName] = useState("DUNG");
@@ -15,7 +18,46 @@ export const Profile = () => {
   const [hovered, setHovered] = useState(false);
   const [selectedColor, setSelectedColor] = useState(0);
   const { userInfo } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
+  const validateUser = () => {
+    if (!firstName) {
+      toast.error("First name is required.");
+      return;
+    }
+    if (!lastName) {
+      toast.error("Last name is required.");
+      return;
+    }
+    return true;
+  };
+  const handleChange = async () => {
+    if (validateUser()) {
+      try {
+        const res = await updateUserApi(userInfo.id, {
+          firstName,
+          lastName,
+          color: selectedColor,
+        });
+        if (res.success) {
+          dispatch(updateSuccess({ userData: res.result }));
+          toast.success("Profile updated successfully.");
+          navigate("/chat");
+        }
+      } catch (error) {
+        toast.error("Something went wrong!");
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (userInfo?.profileSetup) {
+      setFirstName(userInfo.firstName);
+      setLastName(userInfo.lastName);
+      setSelectedColor(userInfo.color);
+    }
+  }, [userInfo]);
   useEffect(() => {
     // if (!userInfo?.profileSetup) {
     //   toast.warning("Please setup profile to continue.", {
@@ -84,7 +126,6 @@ export const Profile = () => {
               <Input
                 placeholder="First Name"
                 type="text"
-                disabled
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 className="rounded-lg p-6 bg-[#2c2e3b] border-none "
@@ -94,7 +135,6 @@ export const Profile = () => {
               <Input
                 placeholder="Last Name"
                 type="text"
-                disabled
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 className="rounded-lg p-6 bg-[#2c2e3b] border-none "
@@ -116,7 +156,10 @@ export const Profile = () => {
           </div>
         </div>
         <div className="w-full ">
-          <Button className="h-16 w-full bg-purple-700 hover:bg-purple-900 transition-all 300">
+          <Button
+            className="h-16 w-full bg-purple-700 hover:bg-purple-900 transition-all 300"
+            onClick={handleChange}
+          >
             Save changes
           </Button>
         </div>

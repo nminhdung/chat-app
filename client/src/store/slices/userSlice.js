@@ -12,9 +12,12 @@ const userSlice = createSlice({
     signInSuccess: (state, action) => {
       state.userInfo = action.payload.userData;
     },
+    updateSuccess: (state, action) => {
+      state.userInfo = action.payload.userData;
+    },
   },
 });
 
-export const { signInSuccess } = userSlice.actions;
+export const { signInSuccess, updateSuccess } = userSlice.actions;
 
 export default userSlice.reducer;

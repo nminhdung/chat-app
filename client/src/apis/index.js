@@ -24,3 +24,11 @@ export const getUserApi = async () => {
   });
   return response.data;
 };
+export const updateUserApi = async (id, userData) => {
+  const response = await axiosIntansce({
+    url: `/user/update-profile/${id}`,
+    method: "put",
+    data: userData,
+  });
+  return response.data;
+};
