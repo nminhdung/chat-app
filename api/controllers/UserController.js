@@ -1,6 +1,7 @@
 import { compare } from "bcrypt";
 import { createAccessToken } from "../middlewares/jwt.js";
 import User from "../models/user.js";
+import { renameSync, unlinkSync } from "fs";
 
 const signup = async (req, res, next) => {
   try {
@@ -85,7 +86,7 @@ const getUserInfo = async (req, res) => {
 };
 const updateUserInfo = async (req, res) => {
   const { id } = req.params;
-  const { firstName, lastName, color, profileSetup} = req.body;
+  const { firstName, lastName, color, profileSetup } = req.body;
   try {
     if (!firstName || !lastName) {
       return res
@@ -106,9 +107,51 @@ const updateUserInfo = async (req, res) => {
     return res.status(500).send("Internal Server Error");
   }
 };
+const uploadImage = async (req, res) => {
+  const { userId } = req;
+  try {
+    if (!req.file) {
+      return res.status(400).send("File is required.");
+    }
+    console.log(req.file);
+    const date = Date.now();
+    let fileName = "uploads/profiles/" + date + req.file.originalname;
+    renameSync(req.file.path, fileName);
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { image: fileName },
+      { new: true, runValidators: true }
+    );
+    return res.status(200).json({
+      success: updatedUser ? true : false,
+      result: updatedUser ? updatedUser.image : null,
+    });
+  } catch (error) {}
+};
+const removeProfileImage = async (req, res) => {
+  try {
+    const { userId } = req;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(400).send("User not found");
+    }
+    if (user.image) {
+      //user.image = http://localhost:7000/uploads/profiles + tên image
+      // xóa file hình ảnh trong uploads/profiles/
+      unlinkSync(user.image);
+    }
+    user.image = null;
+    await user.save();
+    return res.status(200).send("Profile image removed successfully.");
+  } catch (error) {
+    console.log(error.message);
+  }
+};
 export const userController = {
   signup,
   login,
   getUserInfo,
   updateUserInfo,
+  uploadImage,
+  removeProfileImage,
 };

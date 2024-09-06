@@ -32,3 +32,19 @@ export const updateUserApi = async (id, userData) => {
   });
   return response.data;
 };
+
+export const uploadImageProfileApi = async (data) => {
+  const response = await axiosIntansce({
+    url: `/user/upload-image`,
+    method: "post",
+    data,
+  });
+  return response.data;
+};
+export const deleteImageProfileApi = async()=>{
+  const response =await axiosIntansce({
+    url:'/user/remove-profile-image',
+    method:'delete'
+  })
+  return response.data;
+}
