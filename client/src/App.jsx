@@ -11,7 +11,7 @@ import { signInSuccess } from "./store/slices/userSlice";
 
 function App() {
   const dispatch = useDispatch();
-  const { userInfo } = useSelector((state) => state.user);
+  const { userInfo, isLoggedIn } = useSelector((state) => state.user);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -21,6 +21,7 @@ function App() {
         const res = await getUserApi();
         if (res.result) {
           dispatch(signInSuccess({ userData: { ...res.result } }));
+          setLoading(false);
         }
       } catch (error) {
         console.log(error);
@@ -28,12 +29,10 @@ function App() {
         setLoading(false);
       }
     };
-    if (!userInfo) {
+    if (isLoggedIn) {
       getUserData();
-    } else {
-      setLoading(false);
     }
-  }, [userInfo]);
+  }, [isLoggedIn]);
   if (loading) {
     return <div>Loading...</div>;
   }

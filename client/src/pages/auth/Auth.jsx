@@ -16,6 +16,7 @@ function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [formDefault, setFormDefault] = useState("login");
 
   const navigate = useNavigate();
 
@@ -77,12 +78,18 @@ function Auth() {
   const handleSignup = async () => {
     if (validateSignup()) {
       const res = await signUpApi({ email, password });
-      console.log(res);
+      if (res.success) {
+        setFormDefault("login");
+        toast.success("Signup successfully.");
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+      }
     }
   };
-  if (userInfo) {
-    return <Navigate to="/profile" />;
-  }
+  // if (!userInfo?.profileSetup) {
+  //   return <Navigate to="/profile" />;
+  // }
   return (
     <div className="h-[100vh] w-[100vw] flex items-center justify-center">
       <div
@@ -100,17 +107,19 @@ function Auth() {
             </p>
           </div>
           <div className="flex items-center justify-center w-full">
-            <Tabs className="w-3/4" defaultValue="login">
+            <Tabs className="w-3/4" value={formDefault}>
               <TabsList className="bg-transparent rounded-none w-full">
                 <TabsTrigger
                   className="data-[state=active]:bg-transparent text-black text-opacity-90
                   border-b-2 rounded-none w-full data-[state=active]:text-black data-[state=active]:font-semibold
                   data-[state=active]:border-b-purple-500 p-3 transition-all duration-300 "
                   value="login"
+                  onClick={() => setFormDefault("login")}
                 >
                   Login
                 </TabsTrigger>
                 <TabsTrigger
+                  onClick={() => setFormDefault("signup")}
                   className="data-[state=active]:bg-transparent text-black text-opacity-90
                   border-b-2 rounded-none w-full data-[state=active]:text-black data-[state=active]:font-semibold
                   data-[state=active]:border-b-purple-500 p-3 transition-all duration-300 "

@@ -84,13 +84,15 @@ export const Profile = () => {
     } catch (error) {}
   };
   useEffect(() => {
-    if (userInfo?.profileSetup) {
-      setFirstName(userInfo.firstName);
-      setLastName(userInfo.lastName);
-      setSelectedColor(userInfo.color);
-    }
-    if (userInfo?.image) {
-      setImage(`${import.meta.env.VITE_SERVER_URL}/${userInfo.image}`);
+    if (userInfo) {
+      if (userInfo?.profileSetup) {
+        setFirstName(userInfo.firstName);
+        setLastName(userInfo.lastName);
+        setSelectedColor(userInfo.color);
+      }
+      if (userInfo?.image) {
+        setImage(`${import.meta.env.VITE_SERVER_URL}/${userInfo.image}`);
+      }
     }
   }, [userInfo]);
 
@@ -185,7 +187,8 @@ export const Profile = () => {
                 className="rounded-lg p-6 bg-[#2c2e3b] border-none "
               />
             </div>
-            <div className="w-full flex gap-5">
+
+            <div className={`${image ? "hidden" : ""} w-full flex gap-5 `}>
               {colors.map((color, index) => (
                 <div
                   className={`${color} h-8 w-8 rounded-full cursor-pointer transition-all duration-300 ${
@@ -193,6 +196,7 @@ export const Profile = () => {
                       ? "outline outline-white outline-1"
                       : ""
                   }`}
+                  disabled={image ? true : false}
                   key={index}
                   onClick={() => setSelectedColor(index)}
                 ></div>
