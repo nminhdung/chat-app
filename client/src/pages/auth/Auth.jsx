@@ -66,10 +66,10 @@ function Auth() {
     if (validateLogin()) {
       const res = await loginApi({ email, password });
       if (res.result.id) {
-        if (res.result.profileSetup) {
+        dispatch(signInSuccess({ userData: res.result }));
+        if (res?.result?.profileSetup) {
           navigate("/chat");
         } else {
-          dispatch(signInSuccess({ userData: res.result }));
           navigate("/profile");
         }
       }

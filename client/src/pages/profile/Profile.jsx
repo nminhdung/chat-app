@@ -16,7 +16,7 @@ import { updateSuccess } from "@/store/slices/userSlice";
 import { useNavigate } from "react-router-dom";
 
 export const Profile = () => {
-  const [firstName, setFirstName] = useState("DUNG");
+  const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [image, setImage] = useState(null);
   const [hovered, setHovered] = useState(false);
@@ -44,6 +44,7 @@ export const Profile = () => {
           firstName,
           lastName,
           color: selectedColor,
+          profileSetup: true,
         });
         if (res.success) {
           dispatch(updateSuccess({ userData: res.result }));
@@ -84,15 +85,14 @@ export const Profile = () => {
     } catch (error) {}
   };
   useEffect(() => {
-    if (userInfo) {
-      if (userInfo?.profileSetup) {
-        setFirstName(userInfo.firstName);
-        setLastName(userInfo.lastName);
-        setSelectedColor(userInfo.color);
-      }
-      if (userInfo?.image) {
-        setImage(`${import.meta.env.VITE_SERVER_URL}/${userInfo.image}`);
-      }
+    if (userInfo?.profileSetup) {
+      console.log(123);
+      setFirstName(userInfo.firstName);
+      setLastName(userInfo.lastName);
+      setSelectedColor(userInfo.color);
+    }
+    if (userInfo?.image) {
+      setImage(`${import.meta.env.VITE_SERVER_URL}/${userInfo.image}`);
     }
   }, [userInfo]);
 

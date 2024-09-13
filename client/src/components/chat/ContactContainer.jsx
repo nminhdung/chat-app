@@ -1,5 +1,7 @@
 import React from "react";
 import Logo from "@/components/logo/logo.jsx";
+import ProfileInfo from "./ProfileInfo";
+import NewDm from "./NewDm";
 
 const ContactContainer = () => {
   return (
@@ -13,11 +15,13 @@ const ContactContainer = () => {
       <div className="my-5 flex flex-col gap-5">
         <div className="flex items-center justify-between pr-10">
           <Title text="Direct Messages" />
+          <NewDm/>
         </div>
         <div className="flex items-center justify-between pr-10">
           <Title text="Channels" />
         </div>
       </div>
+      <ProfileInfo/>
     </div>
   );
 };

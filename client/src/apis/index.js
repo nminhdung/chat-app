@@ -41,10 +41,25 @@ export const uploadImageProfileApi = async (data) => {
   });
   return response.data;
 };
-export const deleteImageProfileApi = async()=>{
-  const response =await axiosIntansce({
-    url:'/user/remove-profile-image',
-    method:'delete'
-  })
+export const deleteImageProfileApi = async () => {
+  const response = await axiosIntansce({
+    url: "/user/remove-profile-image",
+    method: "delete",
+  });
   return response.data;
-}
+};
+export const logoutApi = async () => {
+  const response = await axiosIntansce({
+    url: "/user/logout",
+    method: "post",
+  });
+  return response.data;
+};
+export const searchContactsApi = async (searchValue) => {
+  const response = await axiosIntansce({
+    url: "/contacts/search",
+    method: "post",
+    data: { searchTerm:searchValue },
+  });
+  return response.data;
+};

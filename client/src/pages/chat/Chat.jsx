@@ -11,16 +11,16 @@ const Chat = () => {
   const navigate = useNavigate();
   console.log(userInfo);
   useEffect(() => {
-    // if (!userInfo?.profileSetup) {
-    //   navigate("/profile");
-    // }
+    if (!userInfo?.profileSetup) {
+      navigate("/profile");
+    }
   }, [userInfo]);
 
   return (
     <div className='flex h-[100vh] text-white overflow-hidden'>
       <ContactContainer />
-      {/* <EmptyChatContainer /> */}
-      <ChatContainer />
+      {/* <EmptyChatContainer />
+      <ChatContainer /> */}
     </div>
   );
 };

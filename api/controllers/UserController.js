@@ -147,6 +147,18 @@ const removeProfileImage = async (req, res) => {
     console.log(error.message);
   }
 };
+const logout = async (req, res) => {
+  try {
+    res.cookie("accessToken", "", {
+      maxAge: 1,
+      secure: true,
+      sameSite: "None",
+    });
+    return res.status(200).json({
+      success: true,
+    });
+  } catch (error) {}
+};
 export const userController = {
   signup,
   login,
@@ -154,4 +166,5 @@ export const userController = {
   updateUserInfo,
   uploadImage,
   removeProfileImage,
+  logout,
 };

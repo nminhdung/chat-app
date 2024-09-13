@@ -19,6 +19,10 @@ userRoutes.post(
   [verifyToken, upload.single("profile-image")],
   userController.uploadImage
 );
-userRoutes.delete('/remove-profile-image',verifyToken,userController.removeProfileImage);
-
+userRoutes.delete(
+  "/remove-profile-image",
+  verifyToken,
+  userController.removeProfileImage
+);
+userRoutes.post("/logout", userController.logout);
 export default userRoutes;
