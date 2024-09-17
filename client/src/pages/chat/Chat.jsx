@@ -8,6 +8,7 @@ import { toast } from "sonner";
 
 const Chat = () => {
   const { userInfo } = useSelector((state) => state.user);
+  const { selectedChatType } = useSelector((state) => state.chat);
   const navigate = useNavigate();
   console.log(userInfo);
   useEffect(() => {
@@ -17,8 +18,13 @@ const Chat = () => {
   }, [userInfo]);
 
   return (
-    <div className='flex h-[100vh] text-white overflow-hidden'>
+    <div className="flex h-[100vh] text-white overflow-hidden">
       <ContactContainer />
+      {selectedChatType === undefined ? (
+        <EmptyChatContainer />
+      ) : (
+        <ChatContainer />
+      )}
       {/* <EmptyChatContainer />
       <ChatContainer /> */}
     </div>

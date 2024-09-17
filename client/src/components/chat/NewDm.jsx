@@ -55,6 +55,7 @@ const NewDm = () => {
     dispatch(setSelectedChatType("contact"));
     dispatch(setSelectedChatData(contact));
     dispatch(setSelectedChatMessages([]));
+    setSearchTerm("");
   };
   useEffect(() => {
     if (searchValue.trim().length <= 0) {
@@ -93,54 +94,58 @@ const NewDm = () => {
               value={searchTerm}
             />
           </div>
-          <ScrollArea className="h-[250px]">
-            <div className="flex flex-col gap-5">
-              {searchedContacts.map((contact) => {
-                return (
-                  <div
-                    className="flex gap-3 items-center cursor-pointer"
-                    key={contact._id}
-                  >
-                    <div className="w-12 h-12 relative">
-                      <Avatar className="h-12 w-12   rounded-full overflow-hidden">
-                        {contact?.image ? (
-                          <AvatarImage
-                            src={`${import.meta.env.VITE_SERVER_URL}/${
-                              contact.image
-                            }`}
-                            alt="profile"
-                            className="object-cover w-full h-full bg-black"
-                          />
-                        ) : (
-                          <div
-                            className={`
+          {searchedContacts.length > 0 && (
+            <ScrollArea className="h-[250px]">
+              <div className="flex flex-col gap-5">
+                {searchedContacts.map((contact) => {
+                  return (
+                    <div
+                      className="flex gap-3 items-center cursor-pointer"
+                      key={contact._id}
+                      onClick={() => selectNewContact(contact)}
+                    >
+                      <div className="w-12 h-12 relative">
+                        <Avatar className="h-12 w-12   rounded-full overflow-hidden">
+                          {contact?.image ? (
+                            <AvatarImage
+                              src={`${import.meta.env.VITE_SERVER_URL}/${
+                                contact.image
+                              }`}
+                              alt="profile"
+                              className="object-cover w-full h-full bg-black"
+                            />
+                          ) : (
+                            <div
+                              className={`
                               uppercase h-12 w-12  text-lg border-[1px] flex justify-center items-center rounded-full ${getColor(
                                 contact.color
                               )}
                              `}
-                          >
-                            {contact?.firstName
-                              ? contact?.firstName.split("").shift()
-                              : contact?.email.split("").shift()}
-                          </div>
-                        )}
-                      </Avatar>
+                            >
+                              {contact?.firstName
+                                ? contact?.firstName.split("").shift()
+                                : contact?.email.split("").shift()}
+                            </div>
+                          )}
+                        </Avatar>
+                      </div>
+                      <div className="flex flex-col">
+                        <span>
+                          {contact?.firstName && contact?.lastName
+                            ? `${contact.firstName} ${contact.lastName}`
+                            : `${contact.email}`}
+                        </span>
+                        <span className="text-xs">{contact?.email} </span>
+                      </div>
                     </div>
-                    <div className="flex flex-col">
-                      <span>
-                        {contact?.firstName && contact?.lastName
-                          ? `${contact.firstName} ${contact.lastName}`
-                          : `${contact.email}`}
-                      </span>
-                      <span className="text-xs">{contact?.email} </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </ScrollArea>
+                  );
+                })}
+              </div>
+            </ScrollArea>
+          )}
+
           {searchedContacts.length <= 0 && (
-            <div className="flex-1 md:bg-[#1c1d25] md:flex mt-5 flex-col justify-center items-center  duration-1000 transition-all">
+            <div className="flex-1  md:flex mt-5 flex-col justify-center items-center  duration-1000 transition-all">
               <Lottie
                 isClickToPauseDisabled={true}
                 height={100}

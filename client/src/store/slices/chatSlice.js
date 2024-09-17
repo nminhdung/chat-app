@@ -30,5 +30,6 @@ export const {
   setSelectedChatType,
   setSelectedChatData,
   setSelectedChatMessages,
+  closeChat
 } = chatSlice.actions;
 export default chatSlice.reducer;
