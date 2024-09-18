@@ -16,7 +16,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "../ui/input";
-import { animationDefaultOptions } from "@/lib/utils";
+import { animationDefaultOptions, getColor } from "@/lib/utils";
 import { searchContactsApi } from "@/apis";
 import { ScrollArea } from "../ui/scroll-area";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";

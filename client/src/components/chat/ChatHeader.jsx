@@ -3,7 +3,7 @@ import React from "react";
 import { RiCloseFill } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { Avatar, AvatarImage } from "../ui/avatar";
-
+import { getColor } from "@/lib/utils";
 const ChatHeader = () => {
   const { selectedChatData, selectedChatType } = useSelector(
     (state) => state.chat

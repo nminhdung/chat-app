@@ -18,17 +18,17 @@ const messageSchema = new mongoose.Schema({
   },
   content: {
     type: String,
-    required: () => {
+    required: function () {
       return this.messageType === "text";
     },
   },
   fileUrl: {
     type: String,
-    required: () => {
+    required:function () {
       return this.messageType === "file";
     },
   },
-  timestamp: {
+  time: {
     type: Date,
     default: Date.now,
   },

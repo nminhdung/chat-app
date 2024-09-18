@@ -1,18 +1,23 @@
+import { addMessage } from "@/store/slices/chatSlice";
 import { createContext, useContext, useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { io } from "socket.io-client";
 
 const SocketContext = createContext(null);
 
 export const useSocket = () => {
-    return useContext(SocketContext);
+  return useContext(SocketContext);
 };
 
 export const SocketProvider = ({ children }) => {
-    const { userInfo } = useSelector((state) => state.user);
-    const socket = useRef();
-    
-    useEffect(() => {
+  const { userInfo } = useSelector((state) => state.user);
+  const { selectedChatType, selectedChatData } = useSelector(
+    (state) => state.chat
+  );
+  const dispatch = useDispatch();
+  const socket = useRef();
+
+  useEffect(() => {
     if (userInfo) {
       socket.current = io(import.meta.env.VITE_SERVER_URL, {
         withCredentials: true,
@@ -21,11 +26,23 @@ export const SocketProvider = ({ children }) => {
       socket.current.on("connect", () => {
         console.log("Connected to socket server");
       });
+
+      const handleRecieveMessage = (message) => {
+        if (
+          selectedChatType !== undefined &&
+          (selectedChatData._id === message.sender._id ||
+            selectedChatData._id === message.recipient._id)
+        ) {
+          console.log("message recieve", message);
+          dispatch(addMessage(message));
+        }
+      };
+      socket.current.on("recieveMessage", handleRecieveMessage);
       return () => {
         socket.current.disconnect();
       };
     }
-  }, [userInfo.id]);
+  }, [userInfo]);
   return (
     <SocketContext.Provider value={socket.current}>
       {children}

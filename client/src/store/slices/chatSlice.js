@@ -24,12 +24,31 @@ const chatSlice = createSlice({
         (state.selectedChatType = undefined),
         (state.selectedChatMessages = []);
     },
+    addMessage: (state, action) => {
+      const selectedChatMessages = state.selectedChatMessages;
+      const selectedChatType = state.selectedChatType;
+      state.selectedChatMessages = [
+        ...selectedChatMessages,
+        {
+          ...action.payload,
+          recipient:
+            selectedChatType === "channel"
+              ? action.payload.recipient
+              : action.payload.recipient._id,
+          sender:
+            selectedChatType === "channel"
+              ? action.payload.sender
+              : action.payload.sender._id,
+        },
+      ];
+    },
   },
 });
 export const {
   setSelectedChatType,
   setSelectedChatData,
   setSelectedChatMessages,
-  closeChat
+  closeChat,
+  addMessage
 } = chatSlice.actions;
 export default chatSlice.reducer;

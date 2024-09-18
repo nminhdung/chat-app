@@ -10,7 +10,6 @@ const Chat = () => {
   const { userInfo } = useSelector((state) => state.user);
   const { selectedChatType } = useSelector((state) => state.chat);
   const navigate = useNavigate();
-  console.log(userInfo);
   useEffect(() => {
     if (!userInfo?.profileSetup) {
       navigate("/profile");

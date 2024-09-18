@@ -21,6 +21,7 @@ const setUpSocket = (server) => {
     }
   };
   const sendMessage = async (message) => {
+    //lấy ra giá trị của key [message.sender=userId]: socketId
     const senderSocketId = userSocketMap.get(message.sender);
     const recipientSocketId = userSocketMap.get(message.recipient);
 
@@ -31,6 +32,7 @@ const setUpSocket = (server) => {
       .populate("recipient", "id firstName lastName color image");
 
     if (senderSocketId) {
+      //Chỉ có client với socketID là senderSocketID nhận được sự kiện `recieveMessage` và messageData
       io.to(senderSocketId).emit("recieveMessage", messageData);
     }
     if (recipientSocketId) {
