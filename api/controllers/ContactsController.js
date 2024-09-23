@@ -1,7 +1,9 @@
 import User from "../models/user.js";
+import Message from "../models/messages.js";
+import mongoose from "mongoose";
 
 const searchContacts = async (req, res, next) => {
-    console.log(req.body)
+  console.log(req.body);
   try {
     const { searchTerm } = req.body;
     if (searchTerm === undefined || searchTerm === null) {
@@ -27,5 +29,67 @@ const searchContacts = async (req, res, next) => {
     });
   } catch (error) {}
 };
+const getContactsDM = async (req, res, next) => {
+  try {
+    let { userId } = req;
+    userId = new mongoose.Types.ObjectId(userId);
 
-export const contactsController = { searchContacts };
+    const contacts = await Message.aggregate([
+      {
+        $match: {
+          $or: [{ sender: userId }, { recipient: userId }],
+        },
+      },
+      {
+        $sort: { time: -1 },
+      },
+      {
+        $group: {
+          _id: {
+            $cond: {
+              if: { $eq: ["$sender", userId] },
+              then: "$recipient",
+              else: "$sender",
+            },
+          },
+          lastMessageTime: { $first: "$time" },
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "contactInfo",
+        },
+      },
+      {
+        $unwind: "$contactInfo",
+      },
+      {
+        $project: {
+          //1 là hiển thị, 0 là loại bỏ trường đó
+          _id: 1,
+          lastMessageTime: 1,
+          email: "$contactInfo.email",
+          firstName: "$contactInfo.firstName",
+          lastName: "$contactInfo.lastName",
+          image: "$contactInfo.image",
+          color: "$contactInfo.color",
+        },
+      },
+      {
+        $sort: { lastMessageTime: -1 },
+      },
+    ]);
+
+    return res.status(200).json({
+      success: contacts ? true : false,
+      result: contacts ? contacts : null,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const contactsController = { searchContacts, getContactsDM };

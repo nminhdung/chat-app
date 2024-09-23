@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import userRoutes from "./routes/userRoutes.js";
 import contactsRoutes from "./routes/contactRoutes.js";
 import setUpSocket from "./setupSocket.js";
+import messageRoutes from "./routes/messageRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -26,6 +27,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use("/api/user", userRoutes);
 app.use("/api/contacts", contactsRoutes);
+app.use("/api/message", messageRoutes);
 
 const server = app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);

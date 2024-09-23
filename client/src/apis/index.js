@@ -59,7 +59,22 @@ export const searchContactsApi = async (searchValue) => {
   const response = await axiosIntansce({
     url: "/contacts/search",
     method: "post",
-    data: { searchTerm:searchValue },
+    data: { searchTerm: searchValue },
+  });
+  return response.data;
+};
+export const getMessagesApi = async (id) => {
+  const response = await axiosIntansce({
+    url: "/message/get-messages",
+    method: "post",
+    data: { id },
+  });
+  return response.data;
+};
+export const getContactsDMApi = async () => {
+  const response = await axiosIntansce({
+    url: "/contacts/get-contacts-dm",
+    method: "get",
   });
   return response.data;
 };

@@ -13,6 +13,7 @@ import { IoPowerSharp } from "react-icons/io5";
 import { logoutApi } from "@/apis";
 import { logoutSuccess } from "@/store/slices/userSlice";
 import { getColor } from "@/lib/utils";
+import { setSelectedChatData, setSelectedChatType } from "@/store/slices/chatSlice";
 
 const ProfileInfo = () => {
   const { userInfo } = useSelector((state) => state.user);
@@ -23,7 +24,6 @@ const ProfileInfo = () => {
     try {
       const res = await logoutApi();
       if (res.success) {
-        console.log('logout')
         dispatch(logoutSuccess());
         navigate("/auth");
       }

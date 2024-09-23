@@ -28,7 +28,7 @@ const ChatHeader = () => {
                 <div
                   className={`
                               uppercase h-12 w-12  text-lg border-[1px] flex justify-center items-center rounded-full ${getColor(
-                                selectedChatData.color
+                                selectedChatData?.color
                               )}
                              `}
                 >
@@ -41,8 +41,8 @@ const ChatHeader = () => {
           </div>
           <div>
             {selectedChatType === "contact"
-              ? `${selectedChatData.firstName} ${selectedChatData.lastName}`
-              : `${selectedChatData.email}`}
+              ? `${selectedChatData?.firstName} ${selectedChatData?.lastName}`
+              : `${selectedChatData?.email}`}
           </div>
         </div>
         <div className="flex gap-5 items-center justify-center">

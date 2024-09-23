@@ -8,6 +8,7 @@ import PrivateRoute from "./pages/privateRoute";
 import { getUserApi } from "./apis";
 import { useDispatch, useSelector } from "react-redux";
 import { signInSuccess } from "./store/slices/userSlice";
+import Home from "./pages/Home";
 
 function App() {
   const dispatch = useDispatch();
@@ -40,6 +41,7 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
+        <Route path='/' element={<Home/>}/>
           <Route path="/auth" element={<Auth />} />
           <Route element={<PrivateRoute />}>
             <Route path="/chat" element={<Chat />} />

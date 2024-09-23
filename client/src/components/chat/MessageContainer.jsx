@@ -1,13 +1,33 @@
+import { getMessagesApi } from "@/apis";
+import { setSelectedChatMessages } from "@/store/slices/chatSlice";
 import moment from "moment";
 import React, { useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const MessageContainer = () => {
   const scrollRef = useRef();
   const { selectedChatType, selectedChatData, selectedChatMessages } =
     useSelector((state) => state.chat);
+  const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.user);
 
+  const getMessages = async () => {
+    try {
+      const res = await getMessagesApi(selectedChatData._id);
+      if (res.status) {
+        dispatch(setSelectedChatMessages(res.result));
+      }
+    } catch (error) {
+      console.log("🚀 ~ getMessages ~ error:", error);
+    }
+  };
+  useEffect(() => {
+    if (selectedChatData._id) {
+      if (selectedChatType === "contact") {
+        getMessages();
+      }
+    }
+  }, [selectedChatData, selectedChatType,]);
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollIntoView({ behavior: "smooth" });
