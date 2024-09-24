@@ -1,4 +1,5 @@
 import Message from "../models/messages.js";
+import { mkdirSync, renameSync } from "fs";
 
 const getMessages = async (req, res) => {
   const user1 = req.userId;
@@ -18,7 +19,30 @@ const getMessages = async (req, res) => {
     result: messages ? messages : null,
   });
 };
+const uploadFile = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).send("File is required.");
+    }
+    const date = new Date();
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    const currentTime = `${day}${month}${year}`;
 
+    let fileDir = `uploads/files/${currentTime}`;
+    let fileName = `${fileDir}/${req.file.originalname}`;
+    mkdirSync(fileDir, { recursive: true });
+    renameSync(req.file.path, fileName);
+    return res.json({
+      success: true,
+      filePath: fileName,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 export const messageController = {
   getMessages,
+  uploadFile,
 };

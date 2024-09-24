@@ -78,3 +78,12 @@ export const getContactsDMApi = async () => {
   });
   return response.data;
 };
+export const uploadFileChatApi = async (data) => {
+  const response = await axiosIntansce({
+    url: "/message/upload-file",
+    method: "post",
+    data,
+  });
+  return response.data;
+};
+

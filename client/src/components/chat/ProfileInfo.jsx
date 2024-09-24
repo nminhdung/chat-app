@@ -25,6 +25,7 @@ const ProfileInfo = () => {
       const res = await logoutApi();
       if (res.success) {
         dispatch(logoutSuccess());
+      
         navigate("/auth");
       }
     } catch (error) {
