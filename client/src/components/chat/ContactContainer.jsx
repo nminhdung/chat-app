@@ -6,6 +6,7 @@ import { getContactsDMApi } from "@/apis";
 import { useDispatch, useSelector } from "react-redux";
 import { setDirectMessageContacts } from "@/store/slices/chatSlice";
 import ContactList from "../contact/ContactList";
+import CreateChannel from "./CreateChannel";
 
 const ContactContainer = () => {
   const { directMessageContacts } = useSelector((state) => state.chat);
@@ -42,6 +43,7 @@ const ContactContainer = () => {
       <div className="my-5">
         <div className="flex items-center justify-between pr-10">
           <Title text="Channels" />
+          <CreateChannel />
         </div>
       </div>
       <ProfileInfo />

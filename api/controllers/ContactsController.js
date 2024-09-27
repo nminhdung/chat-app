@@ -3,7 +3,6 @@ import Message from "../models/messages.js";
 import mongoose from "mongoose";
 
 const searchContacts = async (req, res, next) => {
-  console.log(req.body);
   try {
     const { searchTerm } = req.body;
     if (searchTerm === undefined || searchTerm === null) {
@@ -91,5 +90,31 @@ const getContactsDM = async (req, res, next) => {
     console.log(error);
   }
 };
+const getAllContacts = async (req, res) => {
+  try {
+    const users = await User.find(
+      { _id: { $ne: req.userId } },
+      "firstName lastName _id"
+    );
+    const contacts = users.map((user) => {
+      return {
+        label: user.firstName
+          ? `${user.firstName} ${user.lastName}`
+          : `${user.email}`,
+        value: user._id,
+      };
+    });
+    return res.json({
+      success: contacts ? true : false,
+      result: contacts.length > 0 ? contacts : [],
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-export const contactsController = { searchContacts, getContactsDM };
+export const contactsController = {
+  searchContacts,
+  getContactsDM,
+  getAllContacts,
+};

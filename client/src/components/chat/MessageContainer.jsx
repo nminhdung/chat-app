@@ -1,11 +1,12 @@
-import {  getMessagesApi } from "@/apis";
+import { getMessagesApi } from "@/apis";
 import { setSelectedChatMessages } from "@/store/slices/chatSlice";
 import moment from "moment";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { MdFolderZip } from "react-icons/md";
 import { IoMdArrowRoundDown } from "react-icons/io";
 import axios from "axios";
+import { IoCloseSharp } from "react-icons/io5";
 
 const MessageContainer = () => {
   const scrollRef = useRef();
@@ -13,6 +14,8 @@ const MessageContainer = () => {
     useSelector((state) => state.chat);
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.user);
+  const [showImage, setShowImage] = useState(false);
+  const [imageURL, setImageURL] = useState('');
 
   const getMessages = async () => {
     try {
@@ -32,14 +35,14 @@ const MessageContainer = () => {
     const link = document.createElement("a");
     link.href = urlBlob;
 
-    link.setAttribute("download", url.split("/").pop());
+    link.setAttribute("download", url.split("/").pop()); //đặt tên file đã tải về
     document.body.appendChild(link);
 
     link.click();
     document.body.removeChild(link);
 
     window.URL.revokeObjectURL(url);
-   };
+  };
   const checkImage = (filePath) => {
     const imageRegex =
       /\.(jpg|jpeg|png|gif|bmp|tiff|tif|webp|svg|ico|heic|heif)$/i;
@@ -85,7 +88,13 @@ const MessageContainer = () => {
             } border inline-block p-4 rounded my-1 max-w-[50%] break-words`}
           >
             {checkImage(message.fileUrl) ? (
-              <div className="cursor-pointer">
+              <div
+                className="cursor-pointer"
+                onClick={() => {
+                  setImageURL(message.fileUrl);
+                  setShowImage(true);
+                }}
+              >
                 <img
                   src={`${import.meta.env.VITE_SERVER_URL}/${message.fileUrl}`}
                   className="w-[300px] h-[300px] object-cover"
@@ -137,6 +146,35 @@ const MessageContainer = () => {
     <div className="flex-1 overflow-y-auto scrollbar-hidden py-4 px-8 md:w-[65vw] lg:w-[70vw] xl:w-[80vw] w-full">
       {renderMessages()}
       <div className="" ref={scrollRef}></div>
+      {showImage && (
+        <div className="fixed z-[1000] top-0 left-0 h-[100vh] w-[100vw] flex items-center justify-center backdrop-blur-lg">
+          <div>
+            <img
+              src={`${import.meta.env.VITE_SERVER_URL}/${imageURL}`}
+              className="h-[80vh] w-full object-cover"
+            />
+          </div>
+          <div className="flex gap-5 fixed top-0 mt-5">
+            <button
+              className="bg-blue-500 p-3 text-2xl rounded-full
+             hover:bg-blue-400 cursor-pointer transition-all duration-300"
+              onClick={() => downloadFile(imageURL)}
+            >
+              <IoMdArrowRoundDown />
+            </button>
+            <button
+              className="bg-black/20 p-3 text-2xl rounded-full
+             hover:bg-black/50 cursor-pointer transition-all duration-300"
+              onClick={() => {
+                setImageURL('');
+                setShowImage(false);
+              }}
+            >
+              <IoCloseSharp />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

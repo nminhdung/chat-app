@@ -10,5 +10,6 @@ contactsRoutes.get(
   verifyToken,
   contactsController.getContactsDM
 );
+contactsRoutes.get('/get-all-contacts',verifyToken,contactsController.getAllContacts);
 
 export default contactsRoutes;

@@ -78,6 +78,13 @@ export const getContactsDMApi = async () => {
   });
   return response.data;
 };
+export const getAllContactsApi = async () => {
+  const response = await axiosIntansce({
+    url: "/contacts/get-all-contacts",
+    method: "get",
+  });
+  return response.data;
+};
 export const uploadFileChatApi = async (data) => {
   const response = await axiosIntansce({
     url: "/message/upload-file",
@@ -86,4 +93,3 @@ export const uploadFileChatApi = async (data) => {
   });
   return response.data;
 };
-
