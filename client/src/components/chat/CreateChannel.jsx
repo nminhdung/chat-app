@@ -17,24 +17,24 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "../ui/input";
 import { animationDefaultOptions, getColor } from "@/lib/utils";
-import { getAllContactsApi, searchContactsApi } from "@/apis";
+import { getAllContactsApi, searchContactsApi, createChannelApi } from "@/apis";
 import { ScrollArea } from "../ui/scroll-area";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  addChannels,
   setSelectedChatData,
   setSelectedChatMessages,
   setSelectedChatType,
-  setSelectedContacts,
 } from "@/store/slices/chatSlice";
 import { Button } from "../ui/button";
 import MultipleSelector from "../ui/multipleslector";
 
 const CreateChannel = () => {
   const dispatch = useDispatch();
-  const { selectedContacts } = useSelector((state) => state.chat);
   const [newChannelModal, setNewChannelModel] = useState(false);
+  const [selectedContacts, setSelectedContacts] = useState([]);
   const [allContacts, setAllContacts] = useState([]);
   const [channelName, setChannelName] = useState("");
 
@@ -46,7 +46,26 @@ const CreateChannel = () => {
     getData();
   }, []);
 
-  const createChannel = async () => {};
+  const createChannel = async () => {
+    try {
+      if (channelName.length >= 0 && selectedContacts.length > 0) {
+        const res = await createChannelApi({
+          name: channelName,
+          members: selectedContacts.map((contact) => {
+            return contact.value;
+          }),
+        });
+        if (res.success) {
+          setChannelName("");
+          setSelectedContacts([]);
+          setNewChannelModel(false);
+          dispatch(addChannels(res.result));
+        }
+      }
+    } catch (error) {
+      console.log("🚀 ~ createChannel ~ error:", error);
+    }
+  };
   return (
     <>
       <TooltipProvider>

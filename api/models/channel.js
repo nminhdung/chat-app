@@ -31,5 +31,5 @@ channelSchema.pre("findOneAndUpdate", function (next) {
   this.set({ updatedAt: Date.now() });
   next();
 });
-const Channel = mongoose.model("Messages", channelSchema);
+const Channel = mongoose.model("Channels", channelSchema);
 export default Channel;

@@ -93,3 +93,12 @@ export const uploadFileChatApi = async (data) => {
   });
   return response.data;
 };
+
+export const createChannelApi = async (data) => {
+  const response = await axiosIntansce({
+    url: "/channel/create-channel",
+    method: "post",
+    data,
+  });
+  return response.data;
+};
