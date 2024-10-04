@@ -33,11 +33,20 @@ export const SocketProvider = ({ children }) => {
           (selectedChatData._id === message.sender._id ||
             selectedChatData._id === message.recipient._id)
         ) {
-          console.log("message recieve", message);
           dispatch(addMessage(message));
         }
       };
+      const handleRecieveChannelMessage = (message) => {
+        if (
+          selectedChatType !== undefined &&
+          selectedChatData._id === message.channelId
+        ) {
+          dispatch(addMessage(message))
+          console.log(message);
+        }
+      };
       socket.current.on("recieveMessage", handleRecieveMessage);
+      socket.current.on("recieve-channel-message", handleRecieveChannelMessage);
       return () => {
         socket.current.disconnect();
       };

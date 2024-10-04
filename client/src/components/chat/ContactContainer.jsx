@@ -2,9 +2,12 @@ import React, { useEffect } from "react";
 import Logo from "@/components/logo/logo.jsx";
 import ProfileInfo from "./ProfileInfo";
 import NewDm from "./NewDm";
-import { getContactsDMApi } from "@/apis";
+import { getContactsDMApi, getUserChannelsApi } from "@/apis";
 import { useDispatch, useSelector } from "react-redux";
-import { setDirectMessageContacts } from "@/store/slices/chatSlice";
+import {
+  setChannels,
+  setDirectMessageContacts,
+} from "@/store/slices/chatSlice";
 import ContactList from "../contact/ContactList";
 import CreateChannel from "./CreateChannel";
 
@@ -20,9 +23,16 @@ const ContactContainer = () => {
       dispatch(setDirectMessageContacts(res.result));
     }
   };
+  const getUserChannels = async () => {
+    const res = await getUserChannelsApi();
+    if (res.success) {
+      dispatch(setChannels(res.result));
+    }
+  };
   useEffect(() => {
     if (userInfo) {
       getContactsDM();
+      getUserChannels();
     }
   }, [userInfo]);
   return (

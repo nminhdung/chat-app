@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useNavigate,
+} from "react-router-dom";
 import Auth from "./pages/auth/Auth";
 import { Profile } from "./pages/profile/Profile";
 import Chat from "./pages/chat/Chat";
 import PrivateRoute from "./pages/privateRoute";
 import { getUserApi } from "./apis";
 import { useDispatch, useSelector } from "react-redux";
-import { signInSuccess } from "./store/slices/userSlice";
+import {  signInSuccess } from "./store/slices/userSlice";
 import Home from "./pages/Home";
 
 function App() {
@@ -37,11 +42,12 @@ function App() {
   if (loading) {
     return <div>Loading...</div>;
   }
+
   return (
     <>
       <BrowserRouter>
         <Routes>
-        <Route path='/' element={<Home/>}/>
+          <Route path="/" element={<Home />} />
           <Route path="/auth" element={<Auth />} />
           <Route element={<PrivateRoute />}>
             <Route path="/chat" element={<Chat />} />

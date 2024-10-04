@@ -9,5 +9,14 @@ channelRoutes.post(
   verifyToken,
   channelController.createChannel
 );
-
+channelRoutes.get(
+  "/get-user-channels",
+  verifyToken,
+  channelController.getUserChannels
+);
+channelRoutes.get(
+  "/get-messages-channel/:channelId",
+  verifyToken,
+  channelController.getChannelMessages
+);
 export default channelRoutes;

@@ -102,3 +102,17 @@ export const createChannelApi = async (data) => {
   });
   return response.data;
 };
+export const getUserChannelsApi = async () => {
+  const response = await axiosIntansce({
+    url: "/channel/get-user-channels",
+    method: "get",
+  });
+  return response.data;
+};
+export const getMessagesChannelApi = async (channelId) => {
+  const response = await axiosIntansce({
+    url: `/channel/get-messages-channel/${channelId}`,
+    method: "get",
+  });
+  return response.data;
+};

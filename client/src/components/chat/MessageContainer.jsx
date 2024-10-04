@@ -1,4 +1,4 @@
-import { getMessagesApi } from "@/apis";
+import { getMessagesApi, getMessagesChannelApi } from "@/apis";
 import { setSelectedChatMessages } from "@/store/slices/chatSlice";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
@@ -7,6 +7,8 @@ import { MdFolderZip } from "react-icons/md";
 import { IoMdArrowRoundDown } from "react-icons/io";
 import axios from "axios";
 import { IoCloseSharp } from "react-icons/io5";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { getColor } from "@/lib/utils";
 
 const MessageContainer = () => {
   const scrollRef = useRef();
@@ -15,7 +17,7 @@ const MessageContainer = () => {
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.user);
   const [showImage, setShowImage] = useState(false);
-  const [imageURL, setImageURL] = useState('');
+  const [imageURL, setImageURL] = useState("");
 
   const getMessages = async () => {
     try {
@@ -25,6 +27,17 @@ const MessageContainer = () => {
       }
     } catch (error) {
       console.log("🚀 ~ getMessages ~ error:", error);
+    }
+  };
+  const getMessagesChannel = async () => {
+    try {
+      const res = await getMessagesChannelApi(selectedChatData._id);
+      console.log(res);
+      if (res.success) {
+        dispatch(setSelectedChatMessages(res.result));
+      }
+    } catch (error) {
+      console.log("🚀 ~ getMessagesChannel ~ error:", error);
     }
   };
   const downloadFile = async (url) => {
@@ -52,6 +65,9 @@ const MessageContainer = () => {
     if (selectedChatData._id) {
       if (selectedChatType === "contact") {
         getMessages();
+      }
+      if (selectedChatType === "channel") {
+        getMessagesChannel();
       }
     }
   }, [selectedChatData, selectedChatType]);
@@ -123,6 +139,99 @@ const MessageContainer = () => {
       </div>
     );
   };
+  const renderChannelMessages = (message) => {
+    return (
+      <div
+        className={`mt-5 ${
+          message.sender._id !== userInfo.id ? "text-left" : "text-right"
+        }`}
+      >
+        {message.messageType === "text" && (
+          <div
+            className={`${
+              message.sender._id === userInfo.id
+                ? "bg-[#1e13f1]/70  border-[#1e13f1]/50 text-white"
+                : "bg-[#2a2b33]/5 text-white/80 border-[#ffffff]/20"
+            } border inline-block p-4 rounded my-1 max-w-[50%] break-words`}
+          >
+            {message.content}
+          </div>
+        )}
+        {message.messageType === "file" && (
+          <div
+            className={`${
+              message.sender._id === userInfo.id
+                ? "bg-[#1e13f1]/5 text-[#1e13f1]/90 border-[#1e13f1]/50 text-white"
+                : "bg-[#2a2b33]/5 text-white/80 border-[#ffffff]/20"
+            } border inline-block p-4 rounded my-1 max-w-[50%] break-words`}
+          >
+            {checkImage(message.fileUrl) ? (
+              <div
+                className="cursor-pointer"
+                onClick={() => {
+                  setImageURL(message.fileUrl);
+                  setShowImage(true);
+                }}
+              >
+                <img
+                  src={`${import.meta.env.VITE_SERVER_URL}/${message.fileUrl}`}
+                  className="w-[300px] h-[300px] object-cover"
+                  alt="image"
+                />
+              </div>
+            ) : (
+              <div className="flex items-center justify-center gap-4 cursor-pointer">
+                <span className="text-white/8 text-3xl bg-black/20 rounded-full p-3">
+                  <MdFolderZip />
+                </span>
+                <span>{message.fileUrl.split("/").pop()}</span>
+                <span
+                  className="bg-black/20 p-3 text-2xl rounded-full hover:bg-black/50 "
+                  onClick={() => downloadFile(message.fileUrl)}
+                >
+                  <IoMdArrowRoundDown />
+                </span>
+              </div>
+            )}
+          </div>
+        )}
+        {message.sender._id !== userInfo.id ? (
+          <div className="flex items-center gap-3 justify-start mt-1 h-full">
+            <Avatar className="h-8 w-8 rounded-full overflow-hidden">
+              {message.sender?.image && (
+                <AvatarImage
+                  src={`${import.meta.env.VITE_SERVER_URL}/${
+                    message.sender.image
+                  }`}
+                  alt="profile"
+                  className="object-cover w-full h-full bg-black"
+                />
+              )}
+              <AvatarFallback
+                className={`
+                              uppercase h-8 w-8 text-lg border-[1px] flex justify-center items-center rounded-full ${getColor(
+                                message.sender?.color
+                              )}
+                             `}
+              >
+                {message.sender?.firstName
+                  ? message.sender?.firstName.split("").shift()
+                  : message.sender?.email.split("").shift()}
+              </AvatarFallback>
+            </Avatar>
+            <span className="text-sm text-white/60">{`${message.sender.firstName} ${message.sender.lastName}`}</span>
+            <span className="text-sm text-white/60">
+              {moment(message.time).format("LT")}
+            </span>
+          </div>
+        ) : (
+          <p className="text-sm text-white/60 mt-1">
+            {moment(message.time).format("LT")}
+          </p>
+        )}
+      </div>
+    );
+  };
   const renderMessages = () => {
     let lastDate = null;
     return selectedChatMessages.map((message) => {
@@ -137,6 +246,7 @@ const MessageContainer = () => {
             </div>
           )}
           {selectedChatType === "contact" && renderDMMessages(message)}
+          {selectedChatType === "channel" && renderChannelMessages(message)}
         </div>
       );
     });
@@ -166,7 +276,7 @@ const MessageContainer = () => {
               className="bg-black/20 p-3 text-2xl rounded-full
              hover:bg-black/50 cursor-pointer transition-all duration-300"
               onClick={() => {
-                setImageURL('');
+                setImageURL("");
                 setShowImage(false);
               }}
             >
